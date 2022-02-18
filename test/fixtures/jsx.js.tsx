@@ -1,3 +1,3 @@
 export function Component(): preact.VNode {
-  return <div></div>;
+  return <div>{(<Foo />) as string}</div>;
 }
