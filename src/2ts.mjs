@@ -67,6 +67,11 @@ function processJsdoc(text, comments, imports, node, context) {
   });
 }
 
+const isAnyFunction = (node) =>
+  ts.isFunctionDeclaration(node) ||
+  ts.isArrowFunction(node) ||
+  ts.isFunctionExpression(node);
+
 function processComment(text, comments, imports, node, context, pos, end) {
   const { factory } = context;
   const comment = text.slice(pos, end);
@@ -78,12 +83,12 @@ function processComment(text, comments, imports, node, context, pos, end) {
     let remove = false;
     const type = extractImports(imports, tag.type);
     if (tag.tag.startsWith('return')) {
-      if (ts.isFunctionDeclaration(node) || ts.isArrowFunction(node)) {
+      if (isAnyFunction(node)) {
         remove = true;
         node.type = factory.createTypeReferenceNode(type);
       }
     } else if (tag.tag === 'param') {
-      if (ts.isFunctionDeclaration(node) || ts.isArrowFunction(node)) {
+      if (isAnyFunction(node)) {
         remove = true;
         const param = node.parameters[paramIndex++];
         param.type = factory.createTypeReferenceNode(type);
