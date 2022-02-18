@@ -15,13 +15,18 @@ const style = css`
     border-top: 1px solid #644062;
     padding-top: 20px;
   }
-  @media (min-width: 1400px) {
-    .TestResult > .snippets {
-      display: flex;
-      gap: 20px;
-    }
+  .TestResult > .snippets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  .TestResult > .snippets > * {
+    flex-grow: 1;
+    flex-basis: 0;
+  }
+  @media (max-width: 1200px) {
     .TestResult > .snippets > * {
-      width: 50%;
+      min-width: 100%;
     }
   }
 `;
