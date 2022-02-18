@@ -35,6 +35,7 @@ export const TestResult = ({ name, snippets }) => {
   useStyle(style);
   return html`
     <section class="TestResult">
+      <a id=${name} />
       <h2>${name}</h2>
       <div class="snippets">
         ${snippets.map(
