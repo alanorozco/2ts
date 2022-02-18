@@ -1,7 +1,7 @@
 {
   "name": "2ts",
   "version": "0.0.0",
-  "description": "",
+  "description": "Convert JSdoc into Typescript annotations",
   "main": "index.js",
   "scripts": {
     "test": "npx uvu test test.mjs",
