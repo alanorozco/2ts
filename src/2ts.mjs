@@ -53,9 +53,13 @@ function processJsdoc(text, imports, node, context) {
   if (!commentRanges?.length) {
     return;
   }
+  if (ts.isVariableStatement(node)) {
+    node = node.declarationList;
+  }
   if (ts.isPropertyAssignment(node)) {
     node = node.initializer;
-  } else if (ts.isVariableDeclarationList(node)) {
+  }
+  if (ts.isVariableDeclarationList(node)) {
     // only apply to first declaration
     const [declaration] = node.declarations;
     node = declaration.initializer;
