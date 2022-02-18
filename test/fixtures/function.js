@@ -1,4 +1,5 @@
 /**
+ * Description is preserved :)
  * @param {!Window} bar
  * @return {!Type}
  */

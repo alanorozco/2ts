@@ -1,3 +1,6 @@
+/**
+ * Description is preserved :)
+ */
 function x(bar: Window): Type {
   return y(bar, "foo") as Type;
 }
