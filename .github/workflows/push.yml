@@ -22,5 +22,5 @@ jobs:
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4.2.5
         with:
-          branch: pages
+          branch: docs
           folder: docs
