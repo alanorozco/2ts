@@ -260,4 +260,22 @@
 </pre></div><div><h3><a href="test/fixtures/star.tsx">typescript</a></h3><pre class="hl"><span class="keyword">function</span> <span class="title function_">identity</span>(<span class="params">value: <span class="built_in">any</span></span>): <span class="built_in">any</span> {
   <span class="keyword">return</span> value;
 }
+</pre></div></div></section><section class="TestResult"><h2><a id="typedef" href="#typedef">typedef</a></h2><div class="snippets"><div><h3><a href="test/fixtures/typedef.js">javascript</a></h3><pre class="hl"><span class="comment">/**
+ * <span class="doctag">@typedef</span> {<span class="type">{
+ *   foo: &#x27;foo&#x27;,
+ *   bar?: Whatever
+ * </span>}}
+ */</span>
+<span class="keyword">export</span> <span class="keyword">let</span> <span class="title class_">MyStruct</span>;
+
+<span class="comment">/**
+ * Description
+ * <span class="doctag">@typedef</span> {<span class="type">?string|null|MyTypeAlias[]</span>}
+ */</span>
+<span class="keyword">export</span> <span class="keyword">let</span> <span class="title class_">MyTypeAlias</span>;
+</pre></div><div><h3><a href="test/fixtures/typedef.tsx">typescript</a></h3><pre class="hl"><span class="keyword">export</span> <span class="keyword">type</span> <span class="title class_">MyStruct</span> = { <span class="attr">foo</span>: <span class="string">&quot;foo&quot;</span>; bar?: <span class="title class_">Whatever</span> };
+<span class="comment">/**
+ * Description
+ */</span>
+<span class="keyword">export</span> <span class="keyword">type</span> <span class="title class_">MyTypeAlias</span> = <span class="literal">null</span> | <span class="built_in">string</span> | <span class="literal">null</span> | <span class="title class_">MyTypeAlias</span>[];
 </pre></div></div></section></main></body></html>
