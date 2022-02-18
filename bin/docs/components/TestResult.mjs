@@ -24,7 +24,7 @@ const style = css`
     flex-grow: 1;
     flex-basis: 0;
   }
-  @media (max-width: 800px) {
+  @media (max-width: 1000px) {
     .TestResult > .snippets > * {
       min-width: 100%;
     }
@@ -35,8 +35,7 @@ export const TestResult = ({ name, snippets }) => {
   useStyle(style);
   return html`
     <section class="TestResult">
-      <a id=${name} />
-      <h2>${name}</h2>
+      <h2><a id=${name} href=${`#${name}`}>${name}</a></h2>
       <div class="snippets">
         ${snippets.map(
           ({ filename, code, name }) => html`

@@ -6,7 +6,9 @@ import { useStyle, css } from './Style.mjs';
 
 const style = css`
   .hl {
-    margin-left: 20px;
+    max-width: 100%;
+    overflow-y: hidden;
+    overflow-x: auto;
     font-family: monospace;
     line-height: 1.15;
   }
