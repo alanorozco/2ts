@@ -19,3 +19,8 @@ jobs:
         run: npm ci
       - run: npm run test
       - run: npm run build:site
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4.2.5
+        with:
+          branch: pages
+          folder: docs
