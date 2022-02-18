@@ -6,7 +6,7 @@
   "scripts": {
     "test": "npx uvu test test.mjs",
     "test:update": "IS_UPDATE=1 npm run test",
-    "build:site": "cd bin/site; npm ci; cd ../..; node bin/site/build.mjs"
+    "build:docs": "cd bin/docs; npm ci; cd ../..; node bin/docs/build.mjs"
   },
   "keywords": [],
   "author": "",

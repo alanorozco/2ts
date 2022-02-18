@@ -37,9 +37,9 @@ async function renderRoute(moduleSource, outputFilename) {
 
 (async () => {
   await Promise.all(
-    globbySync("**/*.mjs", { cwd: "bin/site/routes" }).map(async (filename) => {
+    globbySync("**/*.mjs", { cwd: "bin/docs/routes" }).map(async (filename) => {
       const filenameHtml = filename.replace(path.extname(filename), ".html");
-      const outputFilename = `public/${filenameHtml}`;
+      const outputFilename = `docs/${filenameHtml}`;
       await renderRoute(`./routes/${filename}`, outputFilename);
     })
   );
