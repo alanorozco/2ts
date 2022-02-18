@@ -179,6 +179,7 @@
   <span class="keyword">return</span> <span class="title function_">y</span>(<span class="variable language_">window</span>, <span class="string">&quot;foo&quot;</span>) <span class="keyword">as</span> <span class="title class_">Type</span>;
 };
 </pre></div></div></section><section class="TestResult"><h2><a id="function" href="#function">function</a></h2><div class="snippets"><div><h3><a href="test/fixtures/function.js">javascript</a></h3><pre class="hl"><span class="comment">/**
+ * Description is preserved :)
  * <span class="doctag">@param</span> {<span class="type">!Window</span>} <span class="variable">bar</span>
  * <span class="doctag">@return</span> {<span class="type">!Type</span>}
  */</span>
@@ -209,7 +210,10 @@
 <span class="keyword">export</span> <span class="keyword">const</span> a = <span class="keyword">function</span> <span class="title function_">x</span>(<span class="params">bar</span>) {
   <span class="keyword">return</span> <span class="comment">/** <span class="doctag">@type</span> {<span class="type">!Type</span>} */</span> (<span class="title function_">y</span>(bar, <span class="string">&quot;foo&quot;</span>));
 };
-</pre></div><div><h3><a href="test/fixtures/function.js.tsx">typescript</a></h3><pre class="hl"><span class="keyword">function</span> <span class="title function_">x</span>(<span class="params">bar: Window</span>): <span class="title class_">Type</span> {
+</pre></div><div><h3><a href="test/fixtures/function.js.tsx">typescript</a></h3><pre class="hl"><span class="comment">/**
+ * Description is preserved :)
+ */</span>
+<span class="keyword">function</span> <span class="title function_">x</span>(<span class="params">bar: Window</span>): <span class="title class_">Type</span> {
   <span class="keyword">return</span> <span class="title function_">y</span>(bar, <span class="string">&quot;foo&quot;</span>) <span class="keyword">as</span> <span class="title class_">Type</span>;
 }
 
