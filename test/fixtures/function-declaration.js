@@ -1,7 +1,7 @@
 /**
  * @param {!Window} bar
- * @return {!./service/ampdoc-impl.AmpDocService}
+ * @return {!Type}
  */
 function x(bar) {
-  return /** @type {!./service/ampdoc-impl.AmpDocService} */ (y(bar, 'foo'));
+  return /** @type {!Type} */ (y(bar, "foo"));
 }
