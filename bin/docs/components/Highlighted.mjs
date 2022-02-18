@@ -5,6 +5,11 @@ import hljsTypescript from 'highlight.js/lib/languages/typescript';
 import { useStyle, css } from './Style.mjs';
 
 const style = css`
+  @media (min-width: 1000px) {
+    .hl {
+      padding: 0 0 0 20px;
+    }
+  }
   .hl {
     max-width: 100%;
     overflow-y: hidden;
