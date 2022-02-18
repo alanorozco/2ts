@@ -144,34 +144,94 @@
   .hl .meta-keyword {
     font-weight: 700;
   }
-</style></head><body><main><h1>2ts Test Suite</h1><section class="TestResult"><h2>const-arrow-function</h2><div class="snippets"><div><h3><a href="test/fixtures/const-arrow-function.js">javascript</a></h3><pre class="hl"><span class="comment">/**
+</style></head><body><main><h1>2ts Test Suite</h1><section class="TestResult"><h2>const-arrow</h2><div class="snippets"><div><h3><a href="test/fixtures/const-arrow.js">javascript</a></h3><pre class="hl"><span class="comment">/**
  * <span class="doctag">@param</span> {<span class="type">!Window</span>} <span class="variable">bar</span>
  * <span class="doctag">@return</span> {<span class="type">!Type</span>}
  */</span>
 <span class="keyword">const</span> <span class="title function_">x</span> = (<span class="params"><span class="variable language_">window</span></span>) =&gt; {
   <span class="keyword">return</span> <span class="comment">/** <span class="doctag">@type</span> {<span class="type">!Type</span>} */</span> (<span class="title function_">y</span>(<span class="variable language_">window</span>, <span class="string">&quot;foo&quot;</span>));
 };
-</pre></div><div><h3><a href="test/fixtures/const-arrow-function.js.ts">typescript</a></h3><pre class="hl"><span class="comment">/**
+
+<span class="comment">/**
+ * <span class="doctag">@param</span> {<span class="type">!Window</span>} <span class="variable">bar</span>
+ * <span class="doctag">@return</span> {<span class="type">!Type</span>}
+ */</span>
+<span class="keyword">export</span> <span class="keyword">const</span> <span class="title function_">x</span> = (<span class="params"><span class="variable language_">window</span></span>) =&gt; {
+  <span class="keyword">return</span> <span class="comment">/** <span class="doctag">@type</span> {<span class="type">!Type</span>} */</span> (<span class="title function_">y</span>(<span class="variable language_">window</span>, <span class="string">&quot;foo&quot;</span>));
+};
+</pre></div><div><h3><a href="test/fixtures/const-arrow.js.ts">typescript</a></h3><pre class="hl"><span class="comment">/**
  * <span class="doctag">@param</span> {<span class="type">!Window</span>} <span class="variable">bar</span>
  * <span class="doctag">@return</span> {<span class="type">!Type</span>}
  */</span>
 <span class="keyword">const</span> x = (<span class="attr">window</span>: <span class="title class_">Window</span>): <span class="function"><span class="params">Type</span> =&gt;</span> {
   <span class="keyword">return</span> <span class="comment">/** <span class="doctag">@type</span> {<span class="type">!Type</span>} */</span> <span class="title function_">y</span>(<span class="variable language_">window</span>, <span class="string">&quot;foo&quot;</span>) <span class="keyword">as</span> <span class="title class_">Type</span>;
 };
-</pre></div></div></section><section class="TestResult"><h2>function-declaration</h2><div class="snippets"><div><h3><a href="test/fixtures/function-declaration.js">javascript</a></h3><pre class="hl"><span class="comment">/**
+<span class="comment">/**
+ * <span class="doctag">@param</span> {<span class="type">!Window</span>} <span class="variable">bar</span>
+ * <span class="doctag">@return</span> {<span class="type">!Type</span>}
+ */</span>
+<span class="keyword">export</span> <span class="keyword">const</span> x = (<span class="attr">window</span>: <span class="title class_">Window</span>): <span class="function"><span class="params">Type</span> =&gt;</span> {
+  <span class="keyword">return</span> <span class="comment">/** <span class="doctag">@type</span> {<span class="type">!Type</span>} */</span> <span class="title function_">y</span>(<span class="variable language_">window</span>, <span class="string">&quot;foo&quot;</span>) <span class="keyword">as</span> <span class="title class_">Type</span>;
+};
+</pre></div></div></section><section class="TestResult"><h2>function</h2><div class="snippets"><div><h3><a href="test/fixtures/function.js">javascript</a></h3><pre class="hl"><span class="comment">/**
  * <span class="doctag">@param</span> {<span class="type">!Window</span>} <span class="variable">bar</span>
  * <span class="doctag">@return</span> {<span class="type">!Type</span>}
  */</span>
 <span class="keyword">function</span> <span class="title function_">x</span>(<span class="params">bar</span>) {
   <span class="keyword">return</span> <span class="comment">/** <span class="doctag">@type</span> {<span class="type">!Type</span>} */</span> (<span class="title function_">y</span>(bar, <span class="string">&quot;foo&quot;</span>));
 }
-</pre></div><div><h3><a href="test/fixtures/function-declaration.js.ts">typescript</a></h3><pre class="hl"><span class="comment">/**
+
+<span class="comment">/**
+ * <span class="doctag">@param</span> {<span class="type">!Window</span>} <span class="variable">bar</span>
+ * <span class="doctag">@return</span> {<span class="type">!Type</span>}
+ */</span>
+<span class="keyword">export</span> <span class="keyword">function</span> <span class="title function_">x</span>(<span class="params">bar</span>) {
+  <span class="keyword">return</span> <span class="comment">/** <span class="doctag">@type</span> {<span class="type">!Type</span>} */</span> (<span class="title function_">y</span>(bar, <span class="string">&quot;foo&quot;</span>));
+}
+
+<span class="comment">/**
+ * <span class="doctag">@param</span> {<span class="type">!Window</span>} <span class="variable">bar</span>
+ * <span class="doctag">@return</span> {<span class="type">!Type</span>}
+ */</span>
+<span class="keyword">const</span> a = <span class="keyword">function</span> <span class="title function_">x</span>(<span class="params">bar</span>) {
+  <span class="keyword">return</span> <span class="comment">/** <span class="doctag">@type</span> {<span class="type">!Type</span>} */</span> (<span class="title function_">y</span>(bar, <span class="string">&quot;foo&quot;</span>));
+};
+
+<span class="comment">/**
+ * <span class="doctag">@param</span> {<span class="type">!Window</span>} <span class="variable">bar</span>
+ * <span class="doctag">@return</span> {<span class="type">!Type</span>}
+ */</span>
+<span class="keyword">export</span> <span class="keyword">const</span> a = <span class="keyword">function</span> <span class="title function_">x</span>(<span class="params">bar</span>) {
+  <span class="keyword">return</span> <span class="comment">/** <span class="doctag">@type</span> {<span class="type">!Type</span>} */</span> (<span class="title function_">y</span>(bar, <span class="string">&quot;foo&quot;</span>));
+};
+</pre></div><div><h3><a href="test/fixtures/function.js.ts">typescript</a></h3><pre class="hl"><span class="comment">/**
  * <span class="doctag">@param</span> {<span class="type">!Window</span>} <span class="variable">bar</span>
  * <span class="doctag">@return</span> {<span class="type">!Type</span>}
  */</span>
 <span class="keyword">function</span> <span class="title function_">x</span>(<span class="params">bar: Window</span>): <span class="title class_">Type</span> {
   <span class="keyword">return</span> <span class="comment">/** <span class="doctag">@type</span> {<span class="type">!Type</span>} */</span> <span class="title function_">y</span>(bar, <span class="string">&quot;foo&quot;</span>) <span class="keyword">as</span> <span class="title class_">Type</span>;
 }
+<span class="comment">/**
+ * <span class="doctag">@param</span> {<span class="type">!Window</span>} <span class="variable">bar</span>
+ * <span class="doctag">@return</span> {<span class="type">!Type</span>}
+ */</span>
+<span class="keyword">export</span> <span class="keyword">function</span> <span class="title function_">x</span>(<span class="params">bar: Window</span>): <span class="title class_">Type</span> {
+  <span class="keyword">return</span> <span class="comment">/** <span class="doctag">@type</span> {<span class="type">!Type</span>} */</span> <span class="title function_">y</span>(bar, <span class="string">&quot;foo&quot;</span>) <span class="keyword">as</span> <span class="title class_">Type</span>;
+}
+<span class="comment">/**
+ * <span class="doctag">@param</span> {<span class="type">!Window</span>} <span class="variable">bar</span>
+ * <span class="doctag">@return</span> {<span class="type">!Type</span>}
+ */</span>
+<span class="keyword">const</span> a = <span class="keyword">function</span> <span class="title function_">x</span>(<span class="params">bar</span>) {
+  <span class="keyword">return</span> <span class="comment">/** <span class="doctag">@type</span> {<span class="type">!Type</span>} */</span> <span class="title function_">y</span>(bar, <span class="string">&quot;foo&quot;</span>) <span class="keyword">as</span> <span class="title class_">Type</span>;
+};
+<span class="comment">/**
+ * <span class="doctag">@param</span> {<span class="type">!Window</span>} <span class="variable">bar</span>
+ * <span class="doctag">@return</span> {<span class="type">!Type</span>}
+ */</span>
+<span class="keyword">export</span> <span class="keyword">const</span> a = <span class="keyword">function</span> <span class="title function_">x</span>(<span class="params">bar</span>) {
+  <span class="keyword">return</span> <span class="comment">/** <span class="doctag">@type</span> {<span class="type">!Type</span>} */</span> <span class="title function_">y</span>(bar, <span class="string">&quot;foo&quot;</span>) <span class="keyword">as</span> <span class="title class_">Type</span>;
+};
 </pre></div></div></section><section class="TestResult"><h2>import-path</h2><div class="snippets"><div><h3><a href="test/fixtures/import-path.js">javascript</a></h3><pre class="hl"><span class="comment">/**
  * <span class="doctag">@param</span> {<span class="type">!../my/path/foo.Foo</span>} <span class="variable">foo</span>
  * <span class="doctag">@return</span> {<span class="type">!../my/type.MyType</span>}
