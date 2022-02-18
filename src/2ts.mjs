@@ -35,22 +35,16 @@ function extractImports(imports, type) {
 
 /**
  * @param {string} text
+ * @param {[string, string][]} comments
  * @param {{[string: string]: string[]}} imports
  * @param {ts.Node} node
  * @param {ts.TransformationContext} context
  */
-function processJsdoc(text, imports, node, context) {
-  // if (node.jsDoc) {
-  let commentRanges;
-  let isTrailing = false;
+function processJsdoc(text, comments, imports, node, context) {
+  let fullStart;
   try {
-    commentRanges = ts.getLeadingCommentRanges(text, node.getFullStart());
-    if (!commentRanges?.length) {
-      isTrailing = true;
-      commentRanges = ts.getTrailingCommentRanges(text, node.getFullStart());
-    }
-  } catch {}
-  if (!commentRanges?.length) {
+    fullStart = node.getFullStart();
+  } catch {
     return;
   }
   if (ts.isVariableStatement(node)) {
@@ -64,19 +58,32 @@ function processJsdoc(text, imports, node, context) {
     const [declaration] = node.declarations;
     node = declaration.initializer;
   }
+  ts.forEachLeadingCommentRange(text, fullStart, (pos, end) => {
+    processComment(text, comments, imports, node, context, pos, end);
+  });
+  ts.forEachTrailingCommentRange(text, fullStart, (pos, end) => {
+    processComment(text, comments, imports, node, context, pos, end);
+  });
+}
+
+function processComment(text, comments, imports, node, context, pos, end) {
   const { factory } = context;
-  const [commentRange] = commentRanges;
-  const comment = text.slice(commentRange.pos, commentRange.end);
+  const comment = text.slice(pos, end);
+  let replacement = comment;
+
   let paramIndex = 0;
   const [jsdoc] = parseComment(comment);
   for (const tag of jsdoc?.tags || []) {
+    let remove = false;
     const type = extractImports(imports, tag.type);
     if (tag.tag.startsWith("return")) {
       if (ts.isFunctionDeclaration(node) || ts.isArrowFunction(node)) {
+        remove = true;
         node.type = factory.createTypeReferenceNode(type);
       }
     } else if (tag.tag === "param") {
       if (ts.isFunctionDeclaration(node) || ts.isArrowFunction(node)) {
+        remove = true;
         const param = node.parameters[paramIndex++];
         param.type = factory.createTypeReferenceNode(type);
         if (tag.type.includes("=")) {
@@ -87,13 +94,36 @@ function processJsdoc(text, imports, node, context) {
       }
     } else if (tag.tag === "type") {
       if (ts.isParenthesizedExpression(node)) {
+        remove = true;
         node.expression = factory.createAsExpression(
           node.expression,
           factory.createTypeReferenceNode(type)
         );
       }
     }
+    if (remove) {
+      replacement = clearTagFromComment(replacement, tag);
+    }
   }
+  if (replacement !== comment) {
+    if (/^\/\*\*[\n\s]*\*\/$/m.test(replacement)) {
+      replacement = "";
+    }
+    comments.push([comment, replacement]);
+  }
+}
+
+function clearTagFromComment(comment, tag) {
+  for (const { source } of tag.source) {
+    if (source.endsWith("*/") && !source.startsWith("/*")) {
+      continue;
+    }
+    comment = comment.replace(
+      new RegExp(`\\n?${source.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")}`),
+      ""
+    );
+  }
+  return comment;
 }
 
 function serializeImports(imports) {
@@ -111,19 +141,22 @@ function serializeImports(imports) {
  */
 export function twots(filename, text) {
   const imports = {};
+  const comments = [];
+  const sourceFile = ts.createSourceFile(filename, text, languageVersion);
   const transformer = (context) => {
     return (sourceFile) => {
       const visitor = (node) => {
-        processJsdoc(text, imports, node, context);
+        processJsdoc(text, comments, imports, node, context);
         return ts.visitEachChild(node, visitor, context);
       };
       return ts.visitNode(sourceFile, visitor);
     };
   };
-  const sourceFile = ts.createSourceFile(filename, text, languageVersion);
   const [transformed] = ts.transform(sourceFile, [transformer]).transformed;
   const printer = ts.createPrinter();
-  return [serializeImports(imports), printer.printFile(transformed)]
-    .flat()
-    .join("\n");
+  let printed = printer.printFile(transformed);
+  for (const [comment, replacement] of comments) {
+    printed = printed.replace(comment, replacement);
+  }
+  return [serializeImports(imports), printed].flat().join("\n");
 }

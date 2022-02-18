@@ -14,8 +14,9 @@ export function x(bar) {
   return /** @type {!Type} */ (y(bar, "foo"));
 }
 
+// TODO: JSDoc should be stripped out
 /**
- * @param {!Window} bar
+ * @param {!x} bar
  * @return {!Type}
  */
 const a = function x(bar) {
