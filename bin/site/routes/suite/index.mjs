@@ -1,7 +1,7 @@
 import fs from "fs-extra";
 import path from "path";
 import { html } from "htm/preact";
-import { getFixtures as getTestFixtures } from "../../../../test/util.mjs";
+import { getTestFixtures } from "../../../../test/util.mjs";
 import { TestResult } from "../../components/TestResult.mjs";
 import { Main } from "../../components/Main.mjs";
 
