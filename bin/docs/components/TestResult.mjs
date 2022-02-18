@@ -24,7 +24,7 @@ const style = css`
     flex-grow: 1;
     flex-basis: 0;
   }
-  @media (max-width: 1200px) {
+  @media (max-width: 800px) {
     .TestResult > .snippets > * {
       min-width: 100%;
     }

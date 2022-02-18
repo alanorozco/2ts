@@ -32,7 +32,7 @@ const style = css`
   }
   main {
     margin: 0 auto;
-    max-width: 1300px;
+    max-width: 1200px;
     padding: 20px;
   }
 `;
