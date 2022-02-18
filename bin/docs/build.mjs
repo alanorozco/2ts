@@ -1,9 +1,9 @@
-import fs from "fs-extra";
-import path from "path";
-import { html } from "htm/preact";
-import { renderToString } from "preact-render-to-string";
-import { flushStyles, Style } from "./components/Style.mjs";
-import { globbySync } from "globby";
+import fs from 'fs-extra';
+import path from 'path';
+import { html } from 'htm/preact';
+import { renderToString } from 'preact-render-to-string';
+import { flushStyles, Style } from './components/Style.mjs';
+import { globbySync } from 'globby';
 
 /**
  * @param {preact.VNode} tree
@@ -37,8 +37,8 @@ async function renderRoute(moduleSource, outputFilename) {
 
 (async () => {
   await Promise.all(
-    globbySync("**/*.mjs", { cwd: "bin/docs/routes" }).map(async (filename) => {
-      const filenameHtml = filename.replace(path.extname(filename), ".html");
+    globbySync('**/*.mjs', { cwd: 'bin/docs/routes' }).map(async (filename) => {
+      const filenameHtml = filename.replace(path.extname(filename), '.html');
       const outputFilename = `docs/${filenameHtml}`;
       await renderRoute(`./routes/${filename}`, outputFilename);
     })

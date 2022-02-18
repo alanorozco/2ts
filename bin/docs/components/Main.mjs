@@ -1,5 +1,5 @@
-import { html } from "htm/preact";
-import { useStyle, css } from "./Style.mjs";
+import { html } from 'htm/preact';
+import { useStyle, css } from './Style.mjs';
 
 const style = css`
   body {

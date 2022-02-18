@@ -1,6 +1,6 @@
-import { html } from "htm/preact";
-import { Highlighted } from "./Highlighted.mjs";
-import { useStyle, css } from "./Style.mjs";
+import { html } from 'htm/preact';
+import { Highlighted } from './Highlighted.mjs';
+import { useStyle, css } from './Style.mjs';
 
 /**
  * @typedef {{name: string, filename: string, highlighted: string}}

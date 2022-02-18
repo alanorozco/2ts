@@ -1,9 +1,9 @@
-import { html } from "htm/preact";
-import { Main } from "../components/Main.mjs";
-import fs from "fs-extra";
+import { html } from 'htm/preact';
+import { Main } from '../components/Main.mjs';
+import fs from 'fs-extra';
 
 export default () => {
-  const { description } = fs.readJsonSync("package.json");
+  const { description } = fs.readJsonSync('package.json');
   return html`
     <${Main}>
       <h1>2ts</h1>

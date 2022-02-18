@@ -1,5 +1,5 @@
-import { parse as parseComment } from "comment-parser";
-import ts from "typescript";
+import { parse as parseComment } from 'comment-parser';
+import ts from 'typescript';
 
 const languageVersion = ts.ScriptTarget.Latest;
 
@@ -16,13 +16,13 @@ function addImport(imports, path, name) {
 function extractImports(imports, type) {
   let orNull = false;
   return type
-    .replace(/[=!]/g, "")
+    .replace(/[=!]/g, '')
     .replace(/\?/g, () => {
       if (orNull) {
-        return "";
+        return '';
       }
       orNull = true;
-      return "null|";
+      return 'null|';
     })
     .replace(
       /([\./a-z0-9-_]+\/[\./a-z0-9-_]+)\.([a-z0-9-_]+)/gi,
@@ -76,23 +76,23 @@ function processComment(text, comments, imports, node, context, pos, end) {
   for (const tag of jsdoc?.tags || []) {
     let remove = false;
     const type = extractImports(imports, tag.type);
-    if (tag.tag.startsWith("return")) {
+    if (tag.tag.startsWith('return')) {
       if (ts.isFunctionDeclaration(node) || ts.isArrowFunction(node)) {
         remove = true;
         node.type = factory.createTypeReferenceNode(type);
       }
-    } else if (tag.tag === "param") {
+    } else if (tag.tag === 'param') {
       if (ts.isFunctionDeclaration(node) || ts.isArrowFunction(node)) {
         remove = true;
         const param = node.parameters[paramIndex++];
         param.type = factory.createTypeReferenceNode(type);
-        if (tag.type.includes("=")) {
+        if (tag.type.includes('=')) {
           param.questionToken = factory.createToken(
             ts.SyntaxKind.QuestionToken
           );
         }
       }
-    } else if (tag.tag === "type") {
+    } else if (tag.tag === 'type') {
       if (ts.isParenthesizedExpression(node)) {
         remove = true;
         node.expression = factory.createAsExpression(
@@ -107,7 +107,7 @@ function processComment(text, comments, imports, node, context, pos, end) {
   }
   if (replacement !== comment) {
     if (/^\/\*\*[\n\s]*\*\/$/m.test(replacement)) {
-      replacement = "";
+      replacement = '';
     }
     comments.push([comment, replacement]);
   }
@@ -115,12 +115,12 @@ function processComment(text, comments, imports, node, context, pos, end) {
 
 function clearTagFromComment(comment, tag) {
   for (const { source } of tag.source) {
-    if (source.endsWith("*/") && !source.startsWith("/*")) {
+    if (source.endsWith('*/') && !source.startsWith('/*')) {
       continue;
     }
     comment = comment.replace(
-      new RegExp(`\\n?${source.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")}`),
-      ""
+      new RegExp(`\\n?${source.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')}`),
+      ''
     );
   }
   return comment;
@@ -129,7 +129,7 @@ function clearTagFromComment(comment, tag) {
 function serializeImports(imports) {
   return Object.entries(imports).map(
     ([source, identifiers]) =>
-      `import type {${Array.from(identifiers).join("\n")}} from "${source}";`
+      `import type {${Array.from(identifiers).join('\n')}} from "${source}";`
   );
 }
 
@@ -158,5 +158,5 @@ export function twots(filename, text) {
   for (const [comment, replacement] of comments) {
     printed = printed.replace(comment, replacement);
   }
-  return [serializeImports(imports), printed].flat().join("\n");
+  return [serializeImports(imports), printed].flat().join('\n');
 }

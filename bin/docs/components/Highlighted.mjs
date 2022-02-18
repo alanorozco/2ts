@@ -1,8 +1,8 @@
-import { html } from "htm/preact";
+import { html } from 'htm/preact';
 
-import hljs from "highlight.js";
-import hljsTypescript from "highlight.js/lib/languages/typescript";
-import { useStyle, css } from "./Style.mjs";
+import hljs from 'highlight.js';
+import hljsTypescript from 'highlight.js/lib/languages/typescript';
+import { useStyle, css } from './Style.mjs';
 
 const style = css`
   .hl {
@@ -102,14 +102,14 @@ const style = css`
 let hljsConfigured = false;
 function highlight(code, language) {
   if (!hljsConfigured) {
-    hljs.configure({ classPrefix: "" });
-    hljs.registerLanguage("typescript", hljsTypescript);
+    hljs.configure({ classPrefix: '' });
+    hljs.registerLanguage('typescript', hljsTypescript);
     hljsConfigured = true;
   }
   return hljs.highlight(code, { language }).value;
 }
 
-export const Highlighted = ({ code, language = "typescript" }) => {
+export const Highlighted = ({ code, language = 'typescript' }) => {
   useStyle(style);
   const __html = highlight(code, language);
   return html`<pre class="hl" dangerouslySetInnerHTML="${{ __html }}" />`;

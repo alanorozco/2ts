@@ -1,9 +1,9 @@
-import fs from "fs-extra";
-import path from "path";
-import { html } from "htm/preact";
-import { getTestFixtures } from "../../../../test/util.mjs";
-import { TestResult } from "../../components/TestResult.mjs";
-import { Main } from "../../components/Main.mjs";
+import fs from 'fs-extra';
+import path from 'path';
+import { html } from 'htm/preact';
+import { getTestFixtures } from '../../../../test/util.mjs';
+import { TestResult } from '../../components/TestResult.mjs';
+import { Main } from '../../components/Main.mjs';
 
 /**
  * @typedef {{name: string, filename: string, code: string}}
@@ -16,7 +16,7 @@ let SnippetDef;
  * @return {SnippetDef}
  */
 async function readSyntax(name, filename) {
-  const code = await fs.readFile(filename, "utf8");
+  const code = await fs.readFile(filename, 'utf8');
   return { name, filename, code };
 }
 
@@ -28,8 +28,8 @@ export default async function () {
     getTestFixtures().map(async ({ input, output }) => ({
       name: path.basename(input, path.extname(input)),
       snippets: [
-        await readSyntax("javascript", input),
-        await readSyntax("typescript", output),
+        await readSyntax('javascript', input),
+        await readSyntax('typescript', output),
       ],
     }))
   );

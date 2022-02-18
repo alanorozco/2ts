@@ -3,7 +3,7 @@
  * @return {!Type}
  */
 function x(bar) {
-  return /** @type {!Type} */ (y(bar, "foo"));
+  return /** @type {!Type} */ (y(bar, 'foo'));
 }
 
 /**
@@ -11,7 +11,7 @@ function x(bar) {
  * @return {!Type}
  */
 export function x(bar) {
-  return /** @type {!Type} */ (y(bar, "foo"));
+  return /** @type {!Type} */ (y(bar, 'foo'));
 }
 
 // TODO: JSDoc should be stripped out
@@ -20,7 +20,7 @@ export function x(bar) {
  * @return {!Type}
  */
 const a = function x(bar) {
-  return /** @type {!Type} */ (y(bar, "foo"));
+  return /** @type {!Type} */ (y(bar, 'foo'));
 };
 
 /**
@@ -28,5 +28,5 @@ const a = function x(bar) {
  * @return {!Type}
  */
 export const a = function x(bar) {
-  return /** @type {!Type} */ (y(bar, "foo"));
+  return /** @type {!Type} */ (y(bar, 'foo'));
 };
