@@ -16,11 +16,11 @@ export function x(bar) {
 
 // TODO: JSDoc should be stripped out
 /**
- * @param {!x} bar
+ * @param {!Element=} optional
  * @return {!Type}
  */
-const a = function x(bar) {
-  return /** @type {!Type} */ (y(bar, 'foo'));
+const a = function x(optional) {
+  return /** @type {!Type} */ (optional);
 };
 
 /**

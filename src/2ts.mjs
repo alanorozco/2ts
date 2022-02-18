@@ -17,6 +17,7 @@ function extractImports(imports, type) {
   let orNull = false;
   return type
     .replace(/[=!]/g, '')
+    .replace(/\*/g, 'any')
     .replace(/\?/g, () => {
       if (orNull) {
         return '';
