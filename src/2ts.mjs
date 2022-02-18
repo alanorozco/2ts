@@ -18,12 +18,15 @@ function extractImports(imports, type) {
   return type
     .replace(/[=!]/g, '')
     .replace(/\*/g, 'any')
-    .replace(/\?/g, () => {
+    .replace(/\?(.)/g, (match, next) => {
+      if (next === ':') {
+        return match;
+      }
       if (orNull) {
-        return '';
+        return next;
       }
       orNull = true;
-      return 'null|';
+      return `null|${next}`;
     })
     .replace(
       /([\./a-z0-9-_]+\/[\./a-z0-9-_]+)\.([a-z0-9-_]+)/gi,
@@ -32,6 +35,21 @@ function extractImports(imports, type) {
         return name;
       }
     );
+}
+
+function getAnnotated(node) {
+  if (ts.isVariableStatement(node)) {
+    node = node.declarationList;
+  }
+  if (ts.isPropertyAssignment(node)) {
+    node = node.initializer;
+  }
+  if (ts.isVariableDeclarationList(node)) {
+    // only apply to first declaration
+    const [declaration] = node.declarations;
+    node = declaration.initializer;
+  }
+  return node;
 }
 
 /**
@@ -46,25 +64,35 @@ function processJsdoc(text, comments, imports, node, context) {
   try {
     fullStart = node.getFullStart();
   } catch {
-    return;
+    return node;
   }
-  if (ts.isVariableStatement(node)) {
-    node = node.declarationList;
-  }
-  if (ts.isPropertyAssignment(node)) {
-    node = node.initializer;
-  }
-  if (ts.isVariableDeclarationList(node)) {
-    // only apply to first declaration
-    const [declaration] = node.declarations;
-    node = declaration.initializer;
-  }
+  let replacementNode;
   ts.forEachLeadingCommentRange(text, fullStart, (pos, end) => {
-    processComment(text, comments, imports, node, context, pos, end);
+    replacementNode = processComment(
+      text,
+      comments,
+      imports,
+      node,
+      context,
+      pos,
+      end
+    );
   });
   ts.forEachTrailingCommentRange(text, fullStart, (pos, end) => {
-    processComment(text, comments, imports, node, context, pos, end);
+    replacementNode = processComment(
+      text,
+      comments,
+      imports,
+      node,
+      context,
+      pos,
+      end
+    );
   });
+  node = replacementNode || node;
+  const visitor = (node) =>
+    processJsdoc(text, comments, imports, node, context);
+  return ts.visitEachChild(node, visitor, context);
 }
 
 const isAnyFunction = (node) =>
@@ -72,25 +100,37 @@ const isAnyFunction = (node) =>
   ts.isArrowFunction(node) ||
   ts.isFunctionExpression(node);
 
+/**
+ *
+ * @param {*} text
+ * @param {*} comments
+ * @param {*} imports
+ * @param {*} node
+ * @param {ts.TransformationContext} context
+ * @param {*} pos
+ * @param {*} end
+ * @returns
+ */
 function processComment(text, comments, imports, node, context, pos, end) {
   const { factory } = context;
   const comment = text.slice(pos, end);
-  let replacement = comment;
-
+  let replacementNode;
+  let newComment = comment;
   let paramIndex = 0;
   const [jsdoc] = parseComment(comment);
   for (const tag of jsdoc?.tags || []) {
     let remove = false;
     const type = extractImports(imports, tag.type);
+    const annotated = getAnnotated(node);
     if (tag.tag.startsWith('return')) {
-      if (isAnyFunction(node)) {
+      if (isAnyFunction(annotated)) {
         remove = true;
-        node.type = factory.createTypeReferenceNode(type);
+        annotated.type = factory.createTypeReferenceNode(type);
       }
     } else if (tag.tag === 'param') {
-      if (isAnyFunction(node)) {
+      if (isAnyFunction(annotated)) {
         remove = true;
-        const param = node.parameters[paramIndex++];
+        const param = annotated.parameters[paramIndex++];
         param.type = factory.createTypeReferenceNode(type);
         if (tag.type.includes('=')) {
           param.questionToken = factory.createToken(
@@ -99,35 +139,49 @@ function processComment(text, comments, imports, node, context, pos, end) {
         }
       }
     } else if (tag.tag === 'type') {
-      if (ts.isParenthesizedExpression(node)) {
+      if (ts.isParenthesizedExpression(annotated)) {
         remove = true;
-        node.expression = factory.createAsExpression(
-          node.expression,
+        annotated.expression = factory.createAsExpression(
+          annotated.expression,
+          factory.createTypeReferenceNode(type)
+        );
+      }
+    } else if (tag.tag === 'typedef') {
+      if (ts.isVariableStatement(node)) {
+        remove = true;
+        // only apply to first declaration
+        const [declaration] = node.declarationList.declarations;
+        replacementNode = factory.createTypeAliasDeclaration(
+          node.decorators,
+          node.modifiers,
+          declaration.name,
+          [],
           factory.createTypeReferenceNode(type)
         );
       }
     }
     if (remove) {
-      replacement = clearTagFromComment(replacement, tag);
+      newComment = clearTagFromComment(newComment, tag);
     }
   }
-  if (replacement !== comment) {
-    if (/^\/\*\*[\n\s]*\*\/$/m.test(replacement)) {
-      replacement = '';
+  if (newComment !== comment) {
+    if (/^\/\*\*[\n\s]*\*\/$/m.test(newComment)) {
+      newComment = '';
     }
-    comments.push([comment, replacement]);
+    comments.push([comment, newComment]);
   }
+  return replacementNode;
 }
 
 function clearTagFromComment(comment, tag) {
   for (const { source } of tag.source) {
-    if (source.endsWith('*/') && !source.startsWith('/*')) {
-      continue;
+    // either full comments or partial comments (no head or tail)
+    if (!source.endsWith('*/') || source.startsWith('/*')) {
+      comment = comment.replace(
+        new RegExp(`\\n?${source.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')}`),
+        ''
+      );
     }
-    comment = comment.replace(
-      new RegExp(`\\n?${source.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')}`),
-      ''
-    );
   }
   return comment;
 }
@@ -140,7 +194,6 @@ function serializeImports(imports) {
 }
 
 /**
- *
  * @param {string} filename
  * @param {string} text
  * @return {string}
@@ -148,16 +201,13 @@ function serializeImports(imports) {
 export function twots(filename, text) {
   const imports = {};
   const comments = [];
-  const sourceFile = ts.createSourceFile(filename, text, languageVersion);
-  const transformer = (context) => {
-    return (sourceFile) => {
-      const visitor = (node) => {
-        processJsdoc(text, comments, imports, node, context);
-        return ts.visitEachChild(node, visitor, context);
-      };
-      return ts.visitNode(sourceFile, visitor);
-    };
+  const transformer = (context) => (sourceFile) => {
+    const text = sourceFile.getFullText();
+    const visitor = (node) =>
+      processJsdoc(text, comments, imports, node, context);
+    return ts.visitNode(sourceFile, visitor);
   };
+  const sourceFile = ts.createSourceFile(filename, text, languageVersion);
   const [transformed] = ts.transform(sourceFile, [transformer]).transformed;
   const printer = ts.createPrinter();
   let printed = printer.printFile(transformed);
