@@ -8,7 +8,7 @@ export default () => {
     <${Main}>
       <h1>2ts</h1>
       <p>${description}</p>
-      <h2><a href="/suite">Test Suite</a></h2>
+      <h2><a href="./suite">Test Suite</a></h2>
     <//>
   `;
 };
