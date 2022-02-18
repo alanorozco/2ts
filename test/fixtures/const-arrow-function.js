@@ -1,7 +1,7 @@
 /**
- * @param {!Window} window
- * @return {!../my/type.MyType}
+ * @param {!Window} bar
+ * @return {!Type}
  */
 const x = (window) => {
-  return /** @type {!../my/type.MyType} */ (y(window, "foo"));
+  return /** @type {!Type} */ (y(window, "foo"));
 };

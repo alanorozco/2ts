@@ -92,6 +92,13 @@ function processJsdoc(text, imports, node, context) {
   }
 }
 
+function serializeImports(imports) {
+  return Object.entries(imports).map(
+    ([source, identifiers]) =>
+      `import type {${Array.from(identifiers).join("\n")}} from "${source}";`
+  );
+}
+
 /**
  *
  * @param {string} filename
@@ -99,21 +106,20 @@ function processJsdoc(text, imports, node, context) {
  * @return {string}
  */
 export function twots(filename, text) {
+  const imports = {};
   const transformer = (context) => {
     return (sourceFile) => {
-      const imports = {};
       const visitor = (node) => {
         processJsdoc(text, imports, node, context);
         return ts.visitEachChild(node, visitor, context);
       };
-      return ts.visitNode(ts.visitNode(sourceFile, visitor), (result) => {
-        // TODO: add imports
-        return result;
-      });
+      return ts.visitNode(sourceFile, visitor);
     };
   };
   const sourceFile = ts.createSourceFile(filename, text, languageVersion);
   const [transformed] = ts.transform(sourceFile, [transformer]).transformed;
   const printer = ts.createPrinter();
-  return printer.printFile(transformed);
+  return [serializeImports(imports), printer.printFile(transformed)]
+    .flat()
+    .join("\n");
 }

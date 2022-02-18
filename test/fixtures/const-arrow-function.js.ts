@@ -1,7 +1,7 @@
 /**
- * @param {!Window} window
- * @return {!../my/type.MyType}
+ * @param {!Window} bar
+ * @return {!Type}
  */
-const x = (window: Window): MyType => {
-  return /** @type {!../my/type.MyType} */ y(window, "foo") as MyType;
+const x = (window: Window): Type => {
+  return /** @type {!Type} */ y(window, "foo") as Type;
 };
