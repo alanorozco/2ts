@@ -6,11 +6,8 @@ export const Properties = {
   },
   // BUG: Type annotations are ignored
   // BUG: Comment should be stripped out
-  /**
-   * @param {string} bar
-   * @return {string}
-   */
-  baz(bar) {
+
+  baz(bar: string): string {
     return bar;
   },
 };

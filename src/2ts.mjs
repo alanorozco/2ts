@@ -102,7 +102,8 @@ function processJsdoc(text, comments, imports, node, context) {
 const isAnyFunction = (node) =>
   ts.isFunctionDeclaration(node) ||
   ts.isArrowFunction(node) ||
-  ts.isFunctionExpression(node);
+  ts.isFunctionExpression(node) ||
+  ts.isMethodDeclaration(node);
 
 /**
  *

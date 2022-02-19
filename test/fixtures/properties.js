@@ -13,8 +13,6 @@ export const Properties = {
     return bar;
   },
 
-  // BUG: Type annotations are ignored
-  // BUG: Comment should be stripped out
   /**
    * @param {string} bar
    * @return {string}
