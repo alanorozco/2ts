@@ -228,6 +228,10 @@
 <span class="keyword">export</span> <span class="keyword">const</span> a = <span class="keyword">function</span> <span class="title function_">x</span>(<span class="params">bar: Window</span>): <span class="title class_">Type</span> {
   <span class="keyword">return</span> <span class="title function_">y</span>(bar, <span class="string">&quot;foo&quot;</span>) <span class="keyword">as</span> <span class="title class_">Type</span>;
 };
+</pre></div></div></section><section class="TestResult"><h2><a id="import-multiple" href="#import-multiple">import-multiple</a></h2><div class="snippets"><div><h3><a href="test/fixtures/import-multiple.js">javascript</a></h3><pre class="hl"><span class="comment">/** <span class="doctag">@typedef</span> {<span class="type">./foo.A|./foo.B</span>} */</span>
+<span class="keyword">let</span> <span class="title class_">AorB</span>;
+</pre></div><div><h3><a href="test/fixtures/import-multiple.tsx">typescript</a></h3><pre class="hl"><span class="keyword">import</span> <span class="keyword">type</span> { A, B } <span class="keyword">from</span> <span class="string">&quot;./foo&quot;</span>;
+<span class="keyword">type</span> <span class="title class_">AorB</span> = A | B;
 </pre></div></div></section><section class="TestResult"><h2><a id="import-path" href="#import-path">import-path</a></h2><div class="snippets"><div><h3><a href="test/fixtures/import-path.js">javascript</a></h3><pre class="hl"><span class="comment">/**
  * <span class="doctag">@param</span> {<span class="type">!../my/path/foo.Foo</span>} <span class="variable">foo</span>
  * <span class="doctag">@return</span> {<span class="type">!../my/type.MyType</span>}
@@ -250,6 +254,78 @@
 </pre></div><div><h3><a href="test/fixtures/jsx.tsx">typescript</a></h3><pre class="hl"><span class="keyword">export</span> <span class="keyword">function</span> <span class="title function_">Component</span>(<span class="params"></span>): preact.<span class="property">VNode</span> {
   <span class="keyword">return</span> <span class="language-xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span>{(<span class="tag">&lt;<span class="name">Foo</span> /&gt;</span>) as string}<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span>;
 }
+</pre></div></div></section><section class="TestResult"><h2><a id="optional-param" href="#optional-param">optional-param</a></h2><div class="snippets"><div><h3><a href="test/fixtures/optional-param.js">javascript</a></h3><pre class="hl"><span class="comment">/**
+ * <span class="doctag">@param</span> {<span class="type">boolean=</span>} <span class="variable">optional</span>
+ */</span>
+<span class="keyword">function</span> <span class="title function_">a</span>(<span class="params">optional</span>) {
+  <span class="keyword">return</span> optional;
+}
+
+<span class="comment">/**
+ * <span class="doctag">@param</span> {<span class="type">boolean=</span>} <span class="variable">optional</span>
+ */</span>
+<span class="keyword">function</span> <span class="title function_">b</span>(<span class="params">optional = <span class="literal">false</span></span>) {
+  <span class="keyword">return</span> optional;
+}
+</pre></div><div><h3><a href="test/fixtures/optional-param.tsx">typescript</a></h3><pre class="hl"><span class="keyword">function</span> <span class="title function_">a</span>(<span class="params">optional?: <span class="built_in">boolean</span></span>) {
+  <span class="keyword">return</span> optional;
+}
+
+<span class="keyword">function</span> <span class="title function_">b</span>(<span class="params">optional: <span class="built_in">boolean</span> = <span class="literal">false</span></span>) {
+  <span class="keyword">return</span> optional;
+}
+</pre></div></div></section><section class="TestResult"><h2><a id="properties" href="#properties">properties</a></h2><div class="snippets"><div><h3><a href="test/fixtures/properties.js">javascript</a></h3><pre class="hl"><span class="keyword">export</span> <span class="keyword">const</span> <span class="title class_">Properties</span> = {
+  <span class="comment">// <span class="doctag">BUG:</span> Comment should be stripped out</span>
+  <span class="comment">/**
+   * <span class="doctag">@param</span> {<span class="type">string</span>} <span class="variable">bar</span>
+   * <span class="doctag">@return</span> {<span class="type">string</span>}
+   */</span>
+  <span class="attr">foo</span>: <span class="function">(<span class="params">bar</span>) =&gt;</span> bar,
+
+  <span class="comment">// <span class="doctag">BUG:</span> Comment should be stripped out</span>
+  <span class="comment">/**
+   * <span class="doctag">@param</span> {<span class="type">string</span>} <span class="variable">bar</span>
+   * <span class="doctag">@return</span> {<span class="type">string</span>}
+   */</span>
+  <span class="attr">foo</span>: <span class="keyword">function</span> (<span class="params">bar</span>) {
+    <span class="keyword">return</span> bar;
+  },
+
+  <span class="comment">// <span class="doctag">BUG:</span> Type annotations are ignored</span>
+  <span class="comment">// <span class="doctag">BUG:</span> Comment should be stripped out</span>
+  <span class="comment">/**
+   * <span class="doctag">@param</span> {<span class="type">string</span>} <span class="variable">bar</span>
+   * <span class="doctag">@return</span> {<span class="type">string</span>}
+   */</span>
+  <span class="title function_">foo</span>(<span class="params">bar</span>) {
+    <span class="keyword">return</span> bar;
+  },
+};
+</pre></div><div><h3><a href="test/fixtures/properties.tsx">typescript</a></h3><pre class="hl"><span class="keyword">export</span> <span class="keyword">const</span> <span class="title class_">Properties</span> = {
+  <span class="comment">// <span class="doctag">BUG:</span> Comment should be stripped out</span>
+  <span class="comment">/**
+   * <span class="doctag">@param</span> {<span class="type">string</span>} <span class="variable">bar</span>
+   * <span class="doctag">@return</span> {<span class="type">string</span>}
+   */</span>
+  <span class="attr">foo</span>: (<span class="attr">bar</span>: <span class="built_in">string</span>): <span class="function"><span class="params">string</span> =&gt;</span> bar,
+  <span class="comment">// <span class="doctag">BUG:</span> Comment should be stripped out</span>
+  <span class="comment">/**
+   * <span class="doctag">@param</span> {<span class="type">string</span>} <span class="variable">bar</span>
+   * <span class="doctag">@return</span> {<span class="type">string</span>}
+   */</span>
+  <span class="attr">foo</span>: <span class="keyword">function</span> (<span class="params">bar: <span class="built_in">string</span></span>): <span class="built_in">string</span> {
+    <span class="keyword">return</span> bar;
+  },
+  <span class="comment">// <span class="doctag">BUG:</span> Type annotations are ignored</span>
+  <span class="comment">// <span class="doctag">BUG:</span> Comment should be stripped out</span>
+  <span class="comment">/**
+   * <span class="doctag">@param</span> {<span class="type">string</span>} <span class="variable">bar</span>
+   * <span class="doctag">@return</span> {<span class="type">string</span>}
+   */</span>
+  <span class="title function_">foo</span>(<span class="params">bar</span>) {
+    <span class="keyword">return</span> bar;
+  },
+};
 </pre></div></div></section><section class="TestResult"><h2><a id="star" href="#star">star</a></h2><div class="snippets"><div><h3><a href="test/fixtures/star.js">javascript</a></h3><pre class="hl"><span class="comment">/**
  * <span class="doctag">@param</span> {<span class="type">*</span>} <span class="variable">value</span>
  * <span class="doctag">@return</span> {<span class="type">*</span>}
@@ -277,5 +353,9 @@
 <span class="comment">/**
  * Description
  */</span>
-<span class="keyword">export</span> <span class="keyword">type</span> <span class="title class_">MyTypeAlias</span> = <span class="literal">null</span> | <span class="built_in">string</span> | <span class="literal">null</span> | <span class="title class_">MyTypeAlias</span>[];
+<span class="keyword">export</span> <span class="keyword">type</span> <span class="title class_">MyTypeAlias</span> =
+  | <span class="literal">null</span>
+  | <span class="built_in">string</span>
+  | <span class="literal">null</span>
+  | <span class="title class_">MyTypeAlias</span>[];
 </pre></div></div></section></main></body></html>
