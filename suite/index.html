@@ -275,19 +275,17 @@
   <span class="keyword">return</span> optional;
 }
 </pre></div></div></section><section class="TestResult"><h2><a id="properties" href="#properties">properties</a></h2><div class="snippets"><div><h3><a href="test/fixtures/properties.js">javascript</a></h3><pre class="hl"><span class="keyword">export</span> <span class="keyword">const</span> <span class="title class_">Properties</span> = {
-  <span class="comment">// <span class="doctag">BUG:</span> Comment should be stripped out</span>
   <span class="comment">/**
    * <span class="doctag">@param</span> {<span class="type">string</span>} <span class="variable">bar</span>
    * <span class="doctag">@return</span> {<span class="type">string</span>}
    */</span>
   <span class="attr">foo</span>: <span class="function">(<span class="params">bar</span>) =&gt;</span> bar,
 
-  <span class="comment">// <span class="doctag">BUG:</span> Comment should be stripped out</span>
   <span class="comment">/**
    * <span class="doctag">@param</span> {<span class="type">string</span>} <span class="variable">bar</span>
    * <span class="doctag">@return</span> {<span class="type">string</span>}
    */</span>
-  <span class="attr">foo</span>: <span class="keyword">function</span> (<span class="params">bar</span>) {
+  <span class="attr">bar</span>: <span class="keyword">function</span> (<span class="params">bar</span>) {
     <span class="keyword">return</span> bar;
   },
 
@@ -297,23 +295,14 @@
    * <span class="doctag">@param</span> {<span class="type">string</span>} <span class="variable">bar</span>
    * <span class="doctag">@return</span> {<span class="type">string</span>}
    */</span>
-  <span class="title function_">foo</span>(<span class="params">bar</span>) {
+  <span class="title function_">baz</span>(<span class="params">bar</span>) {
     <span class="keyword">return</span> bar;
   },
 };
 </pre></div><div><h3><a href="test/fixtures/properties.tsx">typescript</a></h3><pre class="hl"><span class="keyword">export</span> <span class="keyword">const</span> <span class="title class_">Properties</span> = {
-  <span class="comment">// <span class="doctag">BUG:</span> Comment should be stripped out</span>
-  <span class="comment">/**
-   * <span class="doctag">@param</span> {<span class="type">string</span>} <span class="variable">bar</span>
-   * <span class="doctag">@return</span> {<span class="type">string</span>}
-   */</span>
   <span class="attr">foo</span>: (<span class="attr">bar</span>: <span class="built_in">string</span>): <span class="function"><span class="params">string</span> =&gt;</span> bar,
-  <span class="comment">// <span class="doctag">BUG:</span> Comment should be stripped out</span>
-  <span class="comment">/**
-   * <span class="doctag">@param</span> {<span class="type">string</span>} <span class="variable">bar</span>
-   * <span class="doctag">@return</span> {<span class="type">string</span>}
-   */</span>
-  <span class="attr">foo</span>: <span class="keyword">function</span> (<span class="params">bar: <span class="built_in">string</span></span>): <span class="built_in">string</span> {
+
+  <span class="attr">bar</span>: <span class="keyword">function</span> (<span class="params">bar: <span class="built_in">string</span></span>): <span class="built_in">string</span> {
     <span class="keyword">return</span> bar;
   },
   <span class="comment">// <span class="doctag">BUG:</span> Type annotations are ignored</span>
@@ -322,7 +311,7 @@
    * <span class="doctag">@param</span> {<span class="type">string</span>} <span class="variable">bar</span>
    * <span class="doctag">@return</span> {<span class="type">string</span>}
    */</span>
-  <span class="title function_">foo</span>(<span class="params">bar</span>) {
+  <span class="title function_">baz</span>(<span class="params">bar</span>) {
     <span class="keyword">return</span> bar;
   },
 };
