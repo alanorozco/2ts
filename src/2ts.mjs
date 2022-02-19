@@ -3,6 +3,10 @@ import ts from 'typescript';
 
 const languageVersion = ts.ScriptTarget.Latest;
 
+function escapeRegexLiteral(string) {
+  return string.replace(/[-[\]{}()*+?.,\\^$|#]/g, '\\$&');
+}
+
 function addImport(imports, path, name) {
   imports[path] = imports[path] || new Set();
   imports[path].add(name);
@@ -177,10 +181,8 @@ function clearTagFromComment(comment, tag) {
   for (const { source } of tag.source) {
     // either full comments or partial comments (no head or tail)
     if (!source.endsWith('*/') || source.startsWith('/*')) {
-      comment = comment.replace(
-        new RegExp(`\\n?${source.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')}`),
-        ''
-      );
+      const commentRe = new RegExp(`\\n?${escapeRegexLiteral(source)}`);
+      comment = comment.replace(commentRe, '');
     }
   }
   return comment;
@@ -212,7 +214,12 @@ export function twots(filename, text) {
   const printer = ts.createPrinter();
   let printed = printer.printFile(transformed);
   for (const [comment, replacement] of comments) {
-    printed = printed.replace(comment, replacement);
+    const commentRe = new RegExp(
+      escapeRegexLiteral(comment)
+        .trim()
+        .replace(/\n\s*([^\s])/g, '\\n\\s*$1')
+    );
+    printed = printed.replace(commentRe, replacement);
   }
   return [serializeImports(imports), printed].flat().join('\n');
 }
