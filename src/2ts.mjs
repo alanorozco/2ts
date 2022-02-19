@@ -132,7 +132,7 @@ function processComment(text, comments, imports, node, context, pos, end) {
         remove = true;
         const param = annotated.parameters[paramIndex++];
         param.type = factory.createTypeReferenceNode(type);
-        if (tag.type.includes('=')) {
+        if (tag.type.includes('=') && !param.initializer) {
           param.questionToken = factory.createToken(
             ts.SyntaxKind.QuestionToken
           );
