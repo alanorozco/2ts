@@ -289,8 +289,6 @@
     <span class="keyword">return</span> bar;
   },
 
-  <span class="comment">// <span class="doctag">BUG:</span> Type annotations are ignored</span>
-  <span class="comment">// <span class="doctag">BUG:</span> Comment should be stripped out</span>
   <span class="comment">/**
    * <span class="doctag">@param</span> {<span class="type">string</span>} <span class="variable">bar</span>
    * <span class="doctag">@return</span> {<span class="type">string</span>}
@@ -305,13 +303,8 @@
   <span class="attr">bar</span>: <span class="keyword">function</span> (<span class="params">bar: <span class="built_in">string</span></span>): <span class="built_in">string</span> {
     <span class="keyword">return</span> bar;
   },
-  <span class="comment">// <span class="doctag">BUG:</span> Type annotations are ignored</span>
-  <span class="comment">// <span class="doctag">BUG:</span> Comment should be stripped out</span>
-  <span class="comment">/**
-   * <span class="doctag">@param</span> {<span class="type">string</span>} <span class="variable">bar</span>
-   * <span class="doctag">@return</span> {<span class="type">string</span>}
-   */</span>
-  <span class="title function_">baz</span>(<span class="params">bar</span>) {
+
+  <span class="title function_">baz</span>(<span class="attr">bar</span>: <span class="built_in">string</span>): <span class="built_in">string</span> {
     <span class="keyword">return</span> bar;
   },
 };
