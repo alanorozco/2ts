@@ -13,7 +13,10 @@ import { twots } from '../src/2ts.mjs';
 async function getResult(filename) {
   const text = await readFile(filename, 'utf8');
   const result = twots(filename, text);
-  return prettier.format(result, { parser: 'typescript' });
+  return prettier.format(result, {
+    ...(await prettier.resolveConfig(filename)),
+    parser: 'typescript',
+  });
 }
 
 const isUpdate = process.env.IS_UPDATE === '1';
