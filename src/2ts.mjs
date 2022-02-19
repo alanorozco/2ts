@@ -189,7 +189,7 @@ function clearTagFromComment(comment, tag) {
 function serializeImports(imports) {
   return Object.entries(imports).map(
     ([source, identifiers]) =>
-      `import type {${Array.from(identifiers).join('\n')}} from "${source}";`
+      `import type {${Array.from(identifiers).join(', ')}} from "${source}";`
   );
 }
 
