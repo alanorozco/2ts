@@ -122,16 +122,14 @@ function replaceArrayGenerics(type) {
 
 /**
  *
- * @param {*} text
- * @param {*} comments
- * @param {*} imports
+ * @param {*} ourContext
  * @param {*} node
  * @param {ts.TransformationContext} context
  * @param {*} pos
  * @param {*} end
  * @returns
  */
-function processComment(text, comments, imports, node, context, pos, end) {
+function processComment({ text, comments, imports }, node, context, pos, end) {
   const { factory } = context;
   const comment = text.slice(pos, end);
   let replacementNode;
@@ -219,10 +217,14 @@ function serializeImports(imports) {
 export function twots(filename, text) {
   const imports = {};
   const comments = [];
+  const ourContext = {
+    tsx: false,
+    text,
+    comments,
+    imports,
+  };
   const transformer = (context) => (sourceFile) => {
-    const text = sourceFile.getFullText();
-    const visitor = (node) =>
-      processJsdoc(text, comments, imports, node, context);
+    const visitor = (node) => processJsdoc(ourContext, node, context);
     return ts.visitNode(sourceFile, visitor);
   };
   const sourceFile = ts.createSourceFile(filename, text, languageVersion);
@@ -237,5 +239,6 @@ export function twots(filename, text) {
     );
     printed = printed.replace(commentRe, replacement);
   }
-  return [serializeImports(imports), printed].flat().join('\n');
+  const code = [serializeImports(imports), printed].flat().join('\n');
+  return { tsx: ourContext.tsx, code };
 }

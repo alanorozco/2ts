@@ -12,8 +12,8 @@ import { twots } from '../src/2ts.mjs';
  */
 async function getResult(filename) {
   const text = await readFile(filename, 'utf8');
-  const result = twots(filename, text);
-  return prettier.format(result, {
+  const { code } = twots(filename, text);
+  return prettier.format(code, {
     ...(await prettier.resolveConfig(filename)),
     parser: 'typescript',
   });
