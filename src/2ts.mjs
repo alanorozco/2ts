@@ -57,13 +57,18 @@ function getAnnotated(node) {
 }
 
 /**
- * @param {string} text
- * @param {[string, string][]} comments
- * @param {{[string: string]: string[]}} imports
+ * @param {string} ourContext
  * @param {ts.Node} node
  * @param {ts.TransformationContext} context
  */
-function processJsdoc(text, comments, imports, node, context) {
+function processJsdoc(ourContext, node, context) {
+  if (
+    ts.isJsxFragment(node) ||
+    ts.isJsxOpeningElement(node) ||
+    ts.isJsxSelfClosingElement(node)
+  ) {
+    ourContext.tsx = true;
+  }
   let fullStart;
   try {
     fullStart = node.getFullStart();
@@ -71,31 +76,15 @@ function processJsdoc(text, comments, imports, node, context) {
     return node;
   }
   let replacementNode;
+  const { text } = ourContext;
   ts.forEachLeadingCommentRange(text, fullStart, (pos, end) => {
-    replacementNode = processComment(
-      text,
-      comments,
-      imports,
-      node,
-      context,
-      pos,
-      end
-    );
+    replacementNode = processComment(ourContext, node, context, pos, end);
   });
   ts.forEachTrailingCommentRange(text, fullStart, (pos, end) => {
-    replacementNode = processComment(
-      text,
-      comments,
-      imports,
-      node,
-      context,
-      pos,
-      end
-    );
+    replacementNode = processComment(ourContext, node, context, pos, end);
   });
   node = replacementNode || node;
-  const visitor = (node) =>
-    processJsdoc(text, comments, imports, node, context);
+  const visitor = (node) => processJsdoc(ourContext, node, context);
   return ts.visitEachChild(node, visitor, context);
 }
 
@@ -104,6 +93,32 @@ const isAnyFunction = (node) =>
   ts.isArrowFunction(node) ||
   ts.isFunctionExpression(node) ||
   ts.isMethodDeclaration(node);
+
+function replaceArrayGenerics(type) {
+  while (type.includes('Array<')) {
+    const replaced = type.replace(/Array(<.+>)([^>]|$)/g, (match, t, tail) => {
+      let bracketAt = 0;
+      let i = 0;
+      for (; i < t.length; i++) {
+        const char = t[i];
+        if (char === '<') {
+          bracketAt++;
+        } else if (char === '>') {
+          if (bracketAt === 1) {
+            break;
+          }
+          bracketAt--;
+        }
+      }
+      return `${t.substring(1, i)}[]${t.substring(i + 1)}${tail}`;
+    });
+    if (replaced === type) {
+      return type;
+    }
+    type = replaced;
+  }
+  return type;
+}
 
 /**
  *
@@ -125,7 +140,7 @@ function processComment(text, comments, imports, node, context, pos, end) {
   const [jsdoc] = parseComment(comment);
   for (const tag of jsdoc?.tags || []) {
     let remove = false;
-    const type = extractImports(imports, tag.type);
+    const type = replaceArrayGenerics(extractImports(imports, tag.type));
     const annotated = getAnnotated(node);
     if (tag.tag.startsWith('return')) {
       if (isAnyFunction(annotated)) {
