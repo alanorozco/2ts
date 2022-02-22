@@ -219,6 +219,18 @@ function serializeImports(imports) {
   );
 }
 
+function replaceComments(text, replacements) {
+  for (const [comment, replacement] of replacements) {
+    const commentRe = new RegExp(
+      escapeRegexLiteral(comment)
+        .trim()
+        .replace(/\n\s*([^\s])/g, '\\n\\s*$1')
+    );
+    text = text.replace(commentRe, replacement);
+  }
+  return text;
+}
+
 /**
  * @param {string} filename
  * @param {string} text
@@ -240,15 +252,7 @@ export function twots(filename, text) {
   const sourceFile = ts.createSourceFile(filename, text, languageVersion);
   const [transformed] = ts.transform(sourceFile, [transformer]).transformed;
   const printer = ts.createPrinter();
-  let printed = printer.printFile(transformed);
-  for (const [comment, replacement] of comments) {
-    const commentRe = new RegExp(
-      escapeRegexLiteral(comment)
-        .trim()
-        .replace(/\n\s*([^\s])/g, '\\n\\s*$1')
-    );
-    printed = printed.replace(commentRe, replacement);
-  }
+  const printed = replaceComments(printer.printFile(transformed), comments);
   const code = [serializeImports(imports), printed].flat().join('\n');
   return { tsx: ourContext.tsx, code };
 }
