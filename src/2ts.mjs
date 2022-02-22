@@ -163,6 +163,11 @@ function processComment({ text, comments, imports }, node, context, pos, end) {
           annotated.expression,
           factory.createTypeReferenceNode(type)
         );
+      } else if (ts.isVariableStatement(node)) {
+        remove = true;
+        // only apply to first declaration
+        const [declaration] = node.declarationList.declarations;
+        declaration.type = factory.createTypeReferenceNode(type);
       }
     } else if (tag.tag === 'typedef') {
       if (ts.isVariableStatement(node)) {
