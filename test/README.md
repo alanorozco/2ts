@@ -12,7 +12,7 @@ npm run test:update
 
 ### javascript
 
-```js
+```jsx
 /** @typedef {Array<Foo>} */
 let Simple;
 
@@ -28,7 +28,7 @@ let Deep;
 
 ### typescript
 
-```ts
+```tsx
 type Simple = Foo[];
 type Nested = Bar[][];
 type Interlaced = Promise<Baz[]>[];
@@ -39,7 +39,7 @@ type Deep = Set<Promise<Foo[]>[]>;
 
 ### javascript
 
-```js
+```jsx
 /**
  * @param {!Window} bar
  * @return {!Type}
@@ -59,7 +59,7 @@ export const x = (window) => {
 
 ### typescript
 
-```ts
+```tsx
 const x = (window: Window): Type => {
   return y(window, "foo") as Type;
 };
@@ -73,7 +73,7 @@ export const x = (window: Window): Type => {
 
 ### javascript
 
-```js
+```jsx
 /**
  * @type {Array<{a: string, b: number}>}
  */
@@ -82,7 +82,7 @@ const a = [];
 
 ### typescript
 
-```ts
+```tsx
 const a: { a: string; b: number }[] = [];
 ```
 
@@ -90,7 +90,7 @@ const a: { a: string; b: number }[] = [];
 
 ### javascript
 
-```js
+```jsx
 /**
  * Description is preserved :)
  * @param {!Window} bar
@@ -127,7 +127,7 @@ export const a = function x(bar) {
 
 ### typescript
 
-```ts
+```tsx
 /**
  * Description is preserved :)
  */
@@ -152,14 +152,14 @@ export const a = function x(bar: Window): Type {
 
 ### javascript
 
-```js
+```jsx
 /** @typedef {./foo.A|./foo.B} */
 let AorB;
 ```
 
 ### typescript
 
-```ts
+```tsx
 import type { A, B } from "./foo";
 type AorB = A | B;
 ```
@@ -168,7 +168,7 @@ type AorB = A | B;
 
 ### javascript
 
-```js
+```jsx
 /**
  * @param {!../my/path/foo.Foo} foo
  * @return {!../my/type.MyType}
@@ -180,7 +180,7 @@ const x = (foo) => {
 
 ### typescript
 
-```ts
+```tsx
 import type { Foo } from "../my/path/foo";
 import type { MyType } from "../my/type";
 
@@ -193,7 +193,7 @@ const x = (foo: Foo): MyType => {
 
 ### javascript
 
-```js
+```jsx
 /**
  * @return {preact.VNode}
  */
@@ -204,7 +204,7 @@ export function Component() {
 
 ### typescript
 
-```ts
+```tsx
 export function Component(): preact.VNode {
   return <div>{(<Foo />) as string}</div>;
 }
@@ -214,7 +214,7 @@ export function Component(): preact.VNode {
 
 ### javascript
 
-```js
+```jsx
 /**
  * @param {boolean=} optional
  */
@@ -232,7 +232,7 @@ function b(optional = false) {
 
 ### typescript
 
-```ts
+```tsx
 function a(optional?: boolean) {
   return optional;
 }
@@ -246,7 +246,7 @@ function b(optional: boolean = false) {
 
 ### javascript
 
-```js
+```jsx
 export const Properties = {
   /**
    * @param {string} bar
@@ -274,7 +274,7 @@ export const Properties = {
 
 ### typescript
 
-```ts
+```tsx
 export const Properties = {
   foo: (bar: string): string => bar,
 
@@ -292,7 +292,7 @@ export const Properties = {
 
 ### javascript
 
-```js
+```jsx
 /**
  * @param {*} value
  * @return {*}
@@ -304,7 +304,7 @@ function identity(value) {
 
 ### typescript
 
-```ts
+```tsx
 function identity(value: any): any {
   return value;
 }
@@ -314,7 +314,7 @@ function identity(value: any): any {
 
 ### javascript
 
-```js
+```jsx
 /**
  * @typedef {{
  *   foo: 'foo',
@@ -332,7 +332,7 @@ export let MyTypeAlias;
 
 ### typescript
 
-```ts
+```tsx
 export type MyStruct = { foo: "foo"; bar?: Whatever };
 /**
  * Description

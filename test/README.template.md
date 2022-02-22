@@ -14,12 +14,12 @@ npm run test:update
 
 ### javascript
 
-```js
+```jsx
 __input;
 ```
 
 ### typescript
 
-```ts
+```tsx
 __output;
 ```
