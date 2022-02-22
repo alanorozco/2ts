@@ -136,7 +136,7 @@ function replaceArrayGenerics(type) {
 function processComment({ comments, imports }, comment, node, context) {
   const { factory } = context;
   const [jsdoc] = parseComment(comment);
-  const annotated = getAnnotated(node);
+  const annotated = getAnnotated(node) ?? node;
   let replacementNode;
   let newComment = comment;
   let paramIndex = 0;
@@ -144,7 +144,11 @@ function processComment({ comments, imports }, comment, node, context) {
     newComment = removeTagFromComment(newComment, tag);
   }
   function createTypeReferenceNode(type) {
-    return factory.createTypeReferenceNode(processType(imports, type));
+    const processed = processType(imports, type).trim();
+    if (!processed.length) {
+      return undefined;
+    }
+    return factory.createTypeReferenceNode(processed);
   }
   for (const tag of jsdoc?.tags || []) {
     if (tag.tag.startsWith('return')) {
@@ -166,10 +170,13 @@ function processComment({ comments, imports }, comment, node, context) {
     } else if (tag.tag === 'type') {
       if (ts.isParenthesizedExpression(annotated)) {
         removeTag(tag);
-        annotated.expression = factory.createAsExpression(
-          annotated.expression,
-          createTypeReferenceNode(tag.type)
-        );
+        const typeNode = createTypeReferenceNode(tag.type);
+        if (typeNode) {
+          annotated.expression = factory.createAsExpression(
+            annotated.expression,
+            typeNode
+          );
+        }
       } else if (ts.isVariableStatement(node)) {
         removeTag(tag);
         // only apply to first declaration
@@ -181,13 +188,16 @@ function processComment({ comments, imports }, comment, node, context) {
         removeTag(tag);
         // only apply to first declaration
         const [declaration] = node.declarationList.declarations;
-        replacementNode = factory.createTypeAliasDeclaration(
-          node.decorators,
-          node.modifiers,
-          declaration.name,
-          [],
-          createTypeReferenceNode(tag.type)
-        );
+        const typeNode = createTypeReferenceNode(tag.type);
+        if (typeNode) {
+          replacementNode = factory.createTypeAliasDeclaration(
+            node.decorators,
+            node.modifiers,
+            declaration.name,
+            [],
+            typeNode
+          );
+        }
       }
     }
   }
