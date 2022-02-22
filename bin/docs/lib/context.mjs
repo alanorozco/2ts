@@ -1,10 +1,14 @@
 import { createContext } from 'preact';
 import { useContext } from 'preact/hooks';
 
-export const Style = createContext(null);
+export const Page = createContext(null);
 
-export function useStyle(name) {
-  useContext(Style).add(name);
+export function useStyle(style) {
+  useContext(Page).styles.add(style);
+}
+
+export function useTitle(title) {
+  useContext(Page).title = title;
 }
 
 export function flushStyles(styles) {

@@ -1,5 +1,5 @@
 import { html } from 'htm/preact';
-import { useStyle, css } from './Style.mjs';
+import { useStyle, css } from './context.mjs';
 
 const style = css`
   body {
@@ -24,11 +24,13 @@ const style = css`
     margin: 20px 0;
   }
   h2 {
-    font-weight: normal;
+    font-weight: 600;
+    margin: 60px 0 20px;
   }
   h3 {
     margin: 20px 0;
-    font-size: inherit;
+    font-size: 1.4em;
+    font-weight: 400;
   }
   main {
     margin: 0 auto;

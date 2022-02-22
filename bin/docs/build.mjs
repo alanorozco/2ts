@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import { html } from 'htm/preact';
 import { renderToString } from 'preact-render-to-string';
-import { flushStyles, Style } from './components/Style.mjs';
+import { flushStyles, Page } from './lib/context.mjs';
 import { globbySync } from 'globby';
 
 /**
@@ -11,12 +11,14 @@ import { globbySync } from 'globby';
  */
 function renderHtml(tree) {
   const styles = new Set();
+  const context = { styles };
   const body = renderToString(html`
-    <${Style.Provider} value=${styles}>${tree}<//>
+    <${Page.Provider} value=${context}>${tree}<//>
   `);
   const full = html`
     <html>
       <head>
+        <title>${context.title}</title>
         <style
           dangerouslySetInnerHTML=${{ __html: flushStyles(styles) }}
         ></style>

@@ -2,7 +2,7 @@ import { html } from 'htm/preact';
 
 import hljs from 'highlight.js';
 import hljsTypescript from 'highlight.js/lib/languages/typescript';
-import { useStyle, css } from './Style.mjs';
+import { useStyle, css } from './context.mjs';
 
 const style = css`
   @media (min-width: 1000px) {
@@ -19,7 +19,6 @@ const style = css`
   }
   .hl {
     color: #a39e9b;
-    background: #2f1e2e;
   }
   .hl ::selection,
   .hl::selection {
