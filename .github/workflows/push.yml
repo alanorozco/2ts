@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
 jobs:
-  docs:
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -18,9 +18,3 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - run: npm run test
-      - run: npm run build:docs
-      - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4.2.5
-        with:
-          branch: docs
-          folder: docs
