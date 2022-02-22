@@ -7,17 +7,16 @@ function escapeRegexLiteral(string) {
   return string.replace(/[-[\]{}()*+?.,\\^$|#]/g, '\\$&');
 }
 
-function addImport(imports, path, name) {
-  imports[path] = imports[path] || new Set();
-  imports[path].add(name);
-}
-
 /**
  * @param {Object} imports
  * @param {string} type
  * @return {string}
  */
-function extractImports(imports, type) {
+function processType(imports, type) {
+  return replaceArrayGenerics(extractImports(imports, normalizeType(type)));
+}
+
+function normalizeType(type) {
   let orNull = false;
   return type
     .replace(/[=!]/g, '')
@@ -31,14 +30,18 @@ function extractImports(imports, type) {
       }
       orNull = true;
       return `null|${next}`;
-    })
-    .replace(
-      /([\./a-z0-9-_]+\/[\./a-z0-9-_]+)\.([a-z0-9-_]+)/gi,
-      (unusedMatch, path, name) => {
-        addImport(imports, path, name);
-        return name;
-      }
-    );
+    });
+}
+
+function extractImports(imports, type) {
+  return type.replace(
+    /([\./a-z0-9-_]+\/[\./a-z0-9-_]+)\.([a-z0-9-_]+)/gi,
+    (unusedMatch, path, name) => {
+      imports[path] = imports[path] || new Set();
+      imports[path].add(name);
+      return name;
+    }
+  );
 }
 
 function getAnnotated(node) {
@@ -78,10 +81,12 @@ function processJsdoc(ourContext, node, context) {
   let replacementNode;
   const { text } = ourContext;
   ts.forEachLeadingCommentRange(text, fullStart, (pos, end) => {
-    replacementNode = processComment(ourContext, node, context, pos, end);
+    const comment = text.slice(pos, end);
+    replacementNode = processComment(ourContext, comment, node, context);
   });
   ts.forEachTrailingCommentRange(text, fullStart, (pos, end) => {
-    replacementNode = processComment(ourContext, node, context, pos, end);
+    const comment = text.slice(pos, end);
+    replacementNode = processComment(ourContext, comment, node, context);
   });
   node = replacementNode || node;
   const visitor = (node) => processJsdoc(ourContext, node, context);
@@ -123,33 +128,35 @@ function replaceArrayGenerics(type) {
 /**
  *
  * @param {*} ourContext
+ * @param {*} comment
  * @param {*} node
  * @param {ts.TransformationContext} context
- * @param {*} pos
- * @param {*} end
  * @returns
  */
-function processComment({ text, comments, imports }, node, context, pos, end) {
+function processComment({ comments, imports }, comment, node, context) {
   const { factory } = context;
-  const comment = text.slice(pos, end);
+  const [jsdoc] = parseComment(comment);
+  const annotated = getAnnotated(node);
   let replacementNode;
   let newComment = comment;
   let paramIndex = 0;
-  const [jsdoc] = parseComment(comment);
+  function removeTag(tag) {
+    newComment = removeTagFromComment(newComment, tag);
+  }
+  function createTypeReferenceNode(type) {
+    return factory.createTypeReferenceNode(processType(imports, type));
+  }
   for (const tag of jsdoc?.tags || []) {
-    let remove = false;
-    const type = replaceArrayGenerics(extractImports(imports, tag.type));
-    const annotated = getAnnotated(node);
     if (tag.tag.startsWith('return')) {
       if (isAnyFunction(annotated)) {
-        remove = true;
-        annotated.type = factory.createTypeReferenceNode(type);
+        removeTag(tag);
+        annotated.type = createTypeReferenceNode(tag.type);
       }
     } else if (tag.tag === 'param') {
       if (isAnyFunction(annotated)) {
-        remove = true;
+        removeTag(tag);
         const param = annotated.parameters[paramIndex++];
-        param.type = factory.createTypeReferenceNode(type);
+        param.type = createTypeReferenceNode(tag.type);
         if (tag.type.includes('=') && !param.initializer) {
           param.questionToken = factory.createToken(
             ts.SyntaxKind.QuestionToken
@@ -158,20 +165,20 @@ function processComment({ text, comments, imports }, node, context, pos, end) {
       }
     } else if (tag.tag === 'type') {
       if (ts.isParenthesizedExpression(annotated)) {
-        remove = true;
+        removeTag(tag);
         annotated.expression = factory.createAsExpression(
           annotated.expression,
-          factory.createTypeReferenceNode(type)
+          createTypeReferenceNode(tag.type)
         );
       } else if (ts.isVariableStatement(node)) {
-        remove = true;
+        removeTag(tag);
         // only apply to first declaration
         const [declaration] = node.declarationList.declarations;
-        declaration.type = factory.createTypeReferenceNode(type);
+        declaration.type = createTypeReferenceNode(tag.type);
       }
     } else if (tag.tag === 'typedef') {
       if (ts.isVariableStatement(node)) {
-        remove = true;
+        removeTag(tag);
         // only apply to first declaration
         const [declaration] = node.declarationList.declarations;
         replacementNode = factory.createTypeAliasDeclaration(
@@ -179,24 +186,18 @@ function processComment({ text, comments, imports }, node, context, pos, end) {
           node.modifiers,
           declaration.name,
           [],
-          factory.createTypeReferenceNode(type)
+          createTypeReferenceNode(tag.type)
         );
       }
     }
-    if (remove) {
-      newComment = clearTagFromComment(newComment, tag);
-    }
   }
   if (newComment !== comment) {
-    if (/^\/\*\*[\n\s]*\*\/$/m.test(newComment)) {
-      newComment = '';
-    }
-    comments.push([comment, newComment]);
+    comments.push([comment, maybeClearEmptyComment(newComment)]);
   }
   return replacementNode;
 }
 
-function clearTagFromComment(comment, tag) {
+function removeTagFromComment(comment, tag) {
   for (const { source } of tag.source) {
     // either full comments or partial comments (no head or tail)
     if (!source.endsWith('*/') || source.startsWith('/*')) {
@@ -205,6 +206,10 @@ function clearTagFromComment(comment, tag) {
     }
   }
   return comment;
+}
+
+function maybeClearEmptyComment(comment) {
+  return /^\/\*\*[\n\s]*\*\/$/m.test(comment) ? '' : comment;
 }
 
 function serializeImports(imports) {
