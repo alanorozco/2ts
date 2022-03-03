@@ -199,6 +199,49 @@ function processComment({ comments, imports }, comment, node, context) {
           );
         }
       }
+    } else if (tag.tag === 'enum') {
+      if (ts.isVariableStatement(node)) {
+        removeTag(tag);
+        // only apply to first declaration
+        const [declaration] = node.declarationList.declarations;
+        const name = declaration.name.escapedText;
+        let valuesName = name.replace(/_?enum$/i, '');
+        if (valuesName === name) {
+          valuesName = `${name}_Values`;
+        }
+        replacementNode = [
+          factory.createVariableStatement(
+            /* modifiers */ null,
+            factory.createVariableDeclarationList(
+              [
+                factory.createVariableDeclaration(
+                  valuesName,
+                  /* exclamationToken */ undefined,
+                  /* type */ undefined,
+                  declaration.initializer
+                ),
+              ],
+              ts.NodeFlags.Const
+            )
+          ),
+          factory.createTypeAliasDeclaration(
+            node.decorators,
+            node.modifiers,
+            name,
+            [],
+            // createTypeReferenceNode('string')
+            factory.createIndexedAccessTypeNode(
+              factory.createTypeQueryNode(factory.createIdentifier(valuesName)),
+              factory.createTypeOperatorNode(
+                ts.SyntaxKind.KeyOfKeyword,
+                factory.createTypeQueryNode(
+                  factory.createIdentifier(valuesName)
+                )
+              )
+            )
+          ),
+        ];
+      }
     }
   }
   if (newComment !== comment) {

@@ -86,6 +86,64 @@ const a = [];
 const a: { a: string; b: number }[] = [];
 ```
 
+## empty-type
+
+### javascript
+
+```jsx
+/** @type */
+let foo;
+
+/**
+ * @param a
+ * @return
+ */
+function b(a) {
+  return a;
+}
+```
+
+### typescript
+
+```tsx
+let foo;
+
+function b(a) {
+  return a;
+}
+```
+
+## enum
+
+### javascript
+
+```jsx
+/** @enum */
+const Foo_Enum = {
+  foo: "bar",
+};
+
+/** @enum */
+const Bar_Enum = {
+  x: 1,
+  y: 2,
+};
+```
+
+### typescript
+
+```tsx
+const Foo = {
+  foo: "bar",
+};
+type Foo_Enum = typeof Foo[keyof typeof Foo];
+const Bar = {
+  x: 1,
+  y: 2,
+};
+type Bar_Enum = typeof Bar[keyof typeof Bar];
+```
+
 ## function
 
 ### javascript
